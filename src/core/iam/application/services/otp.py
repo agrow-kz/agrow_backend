@@ -5,8 +5,8 @@ from loguru import logger
 
 from src.core.iam.domain.enums import OTPType
 from src.core.iam.domain.exceptions import InvalidOTPCodeError, OTPCooldownError
-from src.core.shared.application.interfaces.cache_service import ICacheService
-from src.core.shared.application.interfaces.queue_service import IQueueService
+from src.core.shared.infrastructure.services.arq_service import ArqService
+from src.core.shared.infrastructure.services.redis_service import RedisService
 from src.core.shared.infrastructure.tasks import TaskNames
 
 
@@ -17,7 +17,7 @@ class OTPService:
         OTPType.CHANGE_EMAIL: TaskNames.SEND_OTP_CHANGE_EMAIL,
     }
 
-    def __init__(self, cache: ICacheService, queue: IQueueService):
+    def __init__(self, cache: RedisService, queue: ArqService):
         self.cache = cache
         self.queue = queue
 

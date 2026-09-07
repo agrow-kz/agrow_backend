@@ -4,14 +4,13 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from src.core.iam.application.interfaces.repository import IAccountRepository
 from src.core.iam.domain.entities import Account as DomainAccount
 from src.core.iam.infrastructure.mapper import AccountMapper
 from src.core.iam.infrastructure.models import Account as ORMAccount
 from src.core.iam.infrastructure.models import Token as ORMToken
 
 
-class AccountRepository(IAccountRepository):
+class AccountRepository:
     def __init__(self, session: AsyncSession):
         self._session = session
         self._model = ORMAccount

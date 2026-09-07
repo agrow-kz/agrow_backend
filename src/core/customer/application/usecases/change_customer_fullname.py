@@ -1,12 +1,12 @@
 from uuid import UUID
 from venv import logger
 
-from src.core.customer.application.interfaces.uow import ICustomerUnitOfWork
+from src.core.customer.infrastructure.uow import CustomerUnitOfWork
 from src.core.customer.presentation.dto import ChangeCustomerFullname
 
 
 class ChangeCustomerFullnameUseCase:
-    def __init__(self, uow: ICustomerUnitOfWork):
+    def __init__(self, uow: CustomerUnitOfWork):
         self.uow = uow
 
     async def execute(self, customer_id: UUID, fullname_data: ChangeCustomerFullname):

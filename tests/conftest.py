@@ -10,7 +10,9 @@ from scripts.seeds.seed import DataSeeder
 from src.configuration.database.connection import Base
 from src.configuration.dependencies.container import ApplicationContainer
 from src.configuration.settings.settings import ApplicationSettings
-from src.core.shared.application.interfaces.search_service import ISearchService
+from src.core.shared.infrastructure.services.meilisearch_service import (
+    MeilisearchService,
+)
 
 pytest_plugins = [
     "tests.iam.conftest",
@@ -98,7 +100,7 @@ def mute_logger():
 
 @pytest.fixture(autouse=True)
 def mock_search_service(container):
-    mock = AsyncMock(spec=ISearchService)
+    mock = AsyncMock(spec=MeilisearchService)
     with container.shared.meilisearch_service.override(mock):
         yield mock
 

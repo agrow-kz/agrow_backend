@@ -1,19 +1,19 @@
 from loguru import logger
 
 from src.core.iam.application.interfaces.password_service import IPasswordService
-from src.core.iam.application.interfaces.uow import IIAMUnitOfWork
 from src.core.iam.application.services.otp import OTPService
 from src.core.iam.domain.entities import Account
 from src.core.iam.domain.enums import OTPType
 from src.core.iam.domain.exceptions import AccountAlreadyExistsError
 from src.core.iam.domain.value_objects import Email, Password
+from src.core.iam.infrastructure.uow import IAMUnitOfWork
 from src.core.iam.presentation.dto import CreateAccountRequest
 
 
 class CreateAccountUseCase:
     def __init__(
         self,
-        uow: IIAMUnitOfWork,
+        uow: IAMUnitOfWork,
         otp_service: OTPService,
         password_service: IPasswordService,
     ):

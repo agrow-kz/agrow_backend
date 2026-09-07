@@ -1,11 +1,11 @@
 from uuid import UUID
 
-from src.core.vendor.application.interfaces.uow import IVendorUnitOfWork
 from src.core.vendor.domain.entities import Vendor
+from src.core.vendor.infrastructure.uow import VendorUnitOfWork
 
 
 class RestoreVendorUseCase:
-    def __init__(self, uow: IVendorUnitOfWork):
+    def __init__(self, uow: VendorUnitOfWork):
         self.uow = uow
 
     async def execute(self, account_id: UUID):

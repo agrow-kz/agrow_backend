@@ -2,13 +2,13 @@ from uuid import UUID
 
 from loguru import logger
 
-from src.core.vendor.application.interfaces.uow import IVendorUnitOfWork
 from src.core.vendor.domain.entities import Vendor
+from src.core.vendor.infrastructure.uow import VendorUnitOfWork
 from src.core.vendor.presentation.dto import ChangeShopNameRequest
 
 
 class ChangeShopNameUseCase:
-    def __init__(self, uow: IVendorUnitOfWork):
+    def __init__(self, uow: VendorUnitOfWork):
         self.uow = uow
 
     async def execute(self, vendor_id: UUID, dto: ChangeShopNameRequest):

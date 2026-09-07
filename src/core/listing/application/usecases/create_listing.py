@@ -6,18 +6,18 @@ from loguru import logger
 from src.core.catalog.infrastructure.attribute_validation import (
     AttributeValidationService,
 )
-from src.core.listing.application.interfaces.uow import IListingUnitOfWork
 from src.core.listing.application.services.listing_search import ListingSearchService
 from src.core.listing.domain.entities import Listing
 from src.core.listing.domain.enums import ListingStatus
 from src.core.listing.domain.value_objects import Gallery
+from src.core.listing.infrastructure.uow import ListingUnitOfWork
 from src.core.listing.presentation.dto import CreateListingRequest
 
 
 class CreateListingUseCase:
     def __init__(
         self,
-        uow: IListingUnitOfWork,
+        uow: ListingUnitOfWork,
         attribute_validation: AttributeValidationService,
         listing_search_service: ListingSearchService,
     ):

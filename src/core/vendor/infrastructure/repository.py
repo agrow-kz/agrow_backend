@@ -3,13 +3,12 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.vendor.application.interfaces.repository import IVendorRepository
 from src.core.vendor.domain.entities import Vendor
 from src.core.vendor.infrastructure.mapper import VendorMapper
 from src.core.vendor.infrastructure.models import Vendor as ORMVendor
 
 
-class VendorRepository(IVendorRepository):
+class VendorRepository:
     def __init__(self, session: AsyncSession):
         self._session = session
         self.model = ORMVendor

@@ -1,20 +1,20 @@
 from loguru import logger
 
-from src.core.iam.application.interfaces.uow import IIAMUnitOfWork
 from src.core.iam.domain.enums import TokenType
 from src.core.iam.domain.exceptions import AccountNotFoundError
-from src.core.iam.infrastructure.services.pyjwt_token import ITokenService
+from src.core.iam.infrastructure.services.pyjwt_token import PyJWTTokenService
+from src.core.iam.infrastructure.uow import IAMUnitOfWork
 from src.core.iam.presentation.dto import LoginResponse, RefreshData
 
 
 class RefreshTokenUseCase:
-    def __init__(self, unit_of_work: IIAMUnitOfWork, token_service: ITokenService):
-        self.unit_of_work = unit_of_work
+    def __init__(self, uow: IAMUnitOfWork, token_service: PyJWTTokenService):
+        self.uow = uow
         self.token_service = token_service
 
     async def execute(self, refresh_data: RefreshData):
         self.token_service.verify_token(refresh_data.refresh_token, TokenType.REFRESH)
-        async with self.unit_of_work as uow:
+        async with self.uow as uow:
             account = await uow.account.find_by_token_value(refresh_data.refresh_token)
             if not account:
                 raise AccountNotFoundError()

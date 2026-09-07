@@ -1,9 +1,7 @@
 from arq import ArqRedis
 
-from src.core.shared.application.interfaces.queue_service import IQueueService
 
-
-class ArqService(IQueueService):
+class ArqService:
     def __init__(self, pool: ArqRedis):
         self.pool = pool
 

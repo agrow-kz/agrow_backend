@@ -42,7 +42,7 @@ class IAMContainer(containers.DeclarativeContainer):
 
     account_repository = providers.Factory(AccountRepository, session=database_session)
 
-    iam_unit_of_work = providers.Factory(IAMUnitOfWork, session_factory=session_factory)
+    uow = providers.Factory(IAMUnitOfWork, session_factory=session_factory)
 
     phonenumber_normalizer = providers.Singleton(PhoneNormalizer)
 
@@ -66,71 +66,71 @@ class IAMContainer(containers.DeclarativeContainer):
 
     create_account_usecase = providers.Factory(
         CreateAccountUseCase,
-        uow=iam_unit_of_work,
+        uow=uow,
         otp_service=otp_service,
         password_service=password_service,
     )
 
     account_confirmation_usecase = providers.Factory(
         AccountConfirmationUseCase,
-        unit_of_work=iam_unit_of_work,
+        uow=uow,
         otp_service=otp_service,
         token_service=pyjwt_token_service,
     )
 
     resend_confirmation_code_usecase = providers.Factory(
         ResendConfirmationCodeUseCase,
-        unit_of_work=iam_unit_of_work,
+        uow=uow,
         otp_service=otp_service,
     )
 
     login_user_usecase = providers.Factory(
         LoginUserUseCase,
-        unit_of_work=iam_unit_of_work,
+        uow=uow,
         token_service=pyjwt_token_service,
         password_service=password_service,
     )
 
     refresh_token_usecase = providers.Factory(
         RefreshTokenUseCase,
-        unit_of_work=iam_unit_of_work,
+        uow=uow,
         token_service=pyjwt_token_service,
     )
 
     logout_user_usecase = providers.Factory(
         LogoutUserUseCase,
-        unit_of_work=iam_unit_of_work,
+        uow=uow,
     )
 
     forgot_password_usecase = providers.Factory(
         ForgotPasswordUseCase,
-        unit_of_work=iam_unit_of_work,
+        uow=uow,
         otp_service=otp_service,
     )
 
     reset_password_usecase = providers.Factory(
         ResetPasswordUseCase,
-        unit_of_work=iam_unit_of_work,
+        uow=uow,
         password_service=password_service,
         otp_service=otp_service,
     )
 
     change_password_usecase = providers.Factory(
         ChangePasswordUseCase,
-        unit_of_work=iam_unit_of_work,
+        uow=uow,
         password_service=password_service,
     )
 
     request_email_change_usecase = providers.Factory(
         RequestEmailChangeUseCase,
-        uow=iam_unit_of_work,
+        uow=uow,
         otp_service=otp_service,
         cache_service=redis_service,
     )
 
     confirm_email_change_usecase = providers.Factory(
         ConfirmEmailChangeUseCase,
-        uow=iam_unit_of_work,
+        uow=uow,
         otp_service=otp_service,
         cache_service=redis_service,
     )

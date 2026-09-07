@@ -3,7 +3,6 @@ from datetime import datetime, timedelta, timezone
 
 import jwt
 
-from src.core.iam.application.interfaces.token_service import ITokenService
 from src.core.iam.domain.enums import TokenType
 from src.core.iam.domain.exceptions import (
     InvalidTokenError,
@@ -13,7 +12,7 @@ from src.core.iam.domain.exceptions import (
 from src.core.iam.presentation.dto import TokenData
 
 
-class PyJWTTokenService(ITokenService):
+class PyJWTTokenService:
     def __init__(
         self,
         secret_key: str,

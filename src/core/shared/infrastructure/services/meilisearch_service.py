@@ -1,11 +1,10 @@
 from meilisearch_python_sdk import AsyncClient
 from meilisearch_python_sdk.models.settings import MeilisearchSettings
 
-from src.core.shared.application.interfaces.search_service import ISearchService
 from src.core.shared.presentation.dto import SearchIndexConfig, SearchResult
 
 
-class MeilisearchService(ISearchService):
+class MeilisearchService:
     def __init__(self, client: AsyncClient):
         self.client = client
 

@@ -1,12 +1,12 @@
 from uuid import UUID
 
 from src.core.customer.application.services.customer_service import CustomerService
-from src.core.vendor.application.interfaces.uow import IVendorUnitOfWork
 from src.core.vendor.domain.entities import Vendor
+from src.core.vendor.infrastructure.uow import VendorUnitOfWork
 
 
 class CloseVendorUseCase:
-    def __init__(self, uow: IVendorUnitOfWork, customer_service: CustomerService):
+    def __init__(self, uow: VendorUnitOfWork, customer_service: CustomerService):
         self.uow = uow
         self.customer_service = customer_service
 

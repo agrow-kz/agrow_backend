@@ -11,7 +11,7 @@ class IAMUnitOfWork(SQLAlchemyUnitOfWork):
         super().__init__(session_factory=session_factory)
 
     @property
-    def account(self):
+    def account(self) -> AccountRepository:
         if self._session is None:
             raise RuntimeError("UoW not initialized!")
         return AccountRepository(self._session)

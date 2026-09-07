@@ -1,14 +1,14 @@
 from uuid import UUID
 
-from src.core.admin.application.interfaces.uow import IAdminUnitOfWork
 from src.core.admin.domain.exceptions import AdminAlreadyExistsError, AdminNotFoundError
+from src.core.admin.infrastructure.uow import AdminUnitOfWork
 from src.core.admin.presentation.dto import CreateAdminRequest
-from src.core.iam.application.interfaces.repository import IAccountRepository
 from src.core.iam.domain.exceptions import AccountNotFoundError
+from src.core.iam.infrastructure.repository import AccountRepository
 
 
 class AdminService:
-    def __init__(self, uow: IAdminUnitOfWork, account_repository: IAccountRepository):
+    def __init__(self, uow: AdminUnitOfWork, account_repository: AccountRepository):
         self.uow = uow
         self.account_repository = account_repository
 

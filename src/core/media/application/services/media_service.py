@@ -4,9 +4,9 @@ from uuid import UUID
 from loguru import logger
 
 from src.core.media.application.interfaces.storage import IObjectStorage
-from src.core.media.application.interfaces.uow import IMediaUnitOfWork
 from src.core.media.domain.entities import Media
 from src.core.media.domain.value_objects import MediaSize
+from src.core.media.infrastructure.uow import MediaUnitOfWork
 from src.core.media.presentation.dto import (
     ConfirmUploadRequest,
     ConfirmUploadResponse,
@@ -16,7 +16,7 @@ from src.core.media.presentation.dto import (
 
 
 class MediaService:
-    def __init__(self, uow: IMediaUnitOfWork, storage: IObjectStorage):
+    def __init__(self, uow: MediaUnitOfWork, storage: IObjectStorage):
         self.uow = uow
         self.storage = storage
 

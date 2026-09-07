@@ -25,7 +25,7 @@ class ApplicationFactory:
         self.container.gateways.sentry.init()
 
         self.app = FastAPI(
-            title="AGROW Marketplace",
+            title="Sievers Market",
             version="1.0.0",
             lifespan=self._lifespan(),
         )

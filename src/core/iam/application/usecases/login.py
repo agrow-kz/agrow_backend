@@ -1,26 +1,26 @@
 from loguru import logger
 
 from src.core.iam.application.interfaces.password_service import IPasswordService
-from src.core.iam.application.interfaces.token_service import ITokenService
-from src.core.iam.application.interfaces.uow import IIAMUnitOfWork
 from src.core.iam.domain.enums import TokenType
 from src.core.iam.domain.exceptions import InvalidLoginCredentialsError
+from src.core.iam.infrastructure.services.pyjwt_token import PyJWTTokenService
+from src.core.iam.infrastructure.uow import IAMUnitOfWork
 from src.core.iam.presentation.dto import LoginAccount, LoginResponse
 
 
 class LoginUserUseCase:
     def __init__(
         self,
-        unit_of_work: IIAMUnitOfWork,
-        token_service: ITokenService,
+        uow: IAMUnitOfWork,
+        token_service: PyJWTTokenService,
         password_service: IPasswordService,
     ):
-        self.unit_of_work = unit_of_work
+        self.uow = uow
         self.token_service = token_service
         self.password_service = password_service
 
     async def execute(self, login_data: LoginAccount):
-        async with self.unit_of_work as uow:
+        async with self.uow as uow:
             account = await uow.account.get_account_by_email(login_data.email)
             if not account:
                 raise InvalidLoginCredentialsError()

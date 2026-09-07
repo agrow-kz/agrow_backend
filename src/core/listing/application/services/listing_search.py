@@ -2,7 +2,9 @@ from uuid import UUID
 
 from src.core.listing.domain.entities import Listing
 from src.core.listing.presentation.dto import ListingSearchDocument, ListingSearchQuery
-from src.core.shared.application.interfaces.search_service import ISearchService
+from src.core.shared.infrastructure.services.meilisearch_service import (
+    MeilisearchService,
+)
 from src.core.shared.presentation.dto import SearchIndexConfig, SearchResult
 
 
@@ -18,7 +20,7 @@ class ListingSearchService:
     SORTABLE: list[str] = ["price", "created_at"]
     SEARCHABLE: list[str] = ["title", "description"]
 
-    def __init__(self, search_service: ISearchService):
+    def __init__(self, search_service: MeilisearchService):
         self.search_service = search_service
 
     async def index_listing(self, listing: Listing, attributes: dict) -> None:

@@ -2,13 +2,13 @@ from uuid import UUID
 
 from loguru import logger
 
-from src.core.customer.application.interfaces.uow import ICustomerUnitOfWork
 from src.core.customer.domain.entities import Customer
+from src.core.customer.infrastructure.uow import CustomerUnitOfWork
 from src.core.customer.presentation.dto import CreateCustomerRequest
 
 
 class CreateCustomerUseCase:
-    def __init__(self, uow: ICustomerUnitOfWork):
+    def __init__(self, uow: CustomerUnitOfWork):
         self.uow = uow
 
     async def execute(self, account_id: UUID, dto: CreateCustomerRequest):

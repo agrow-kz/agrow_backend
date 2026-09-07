@@ -8,7 +8,7 @@ class APISessionService:
     def __init__(
         self, mode: str, access_token_lifetime: int, refresh_token_lifetime: int
     ):
-        self._is_production = mode == "prod"
+        self._is_production = mode == "production"
         self._access_token_lifetime = access_token_lifetime * 60
         self._refresh_token_lifetime = refresh_token_lifetime * 24 * 60 * 60
 

@@ -1,20 +1,18 @@
 from uuid import UUID
 
 from src.core.iam.application.interfaces.password_service import IPasswordService
-from src.core.iam.application.interfaces.uow import IIAMUnitOfWork
 from src.core.iam.domain.exceptions import PasswordMismatchError
+from src.core.iam.infrastructure.uow import IAMUnitOfWork
 from src.core.iam.presentation.dto import ChangePasswordData
 
 
 class ChangePasswordUseCase:
-    def __init__(
-        self, unit_of_work: IIAMUnitOfWork, password_service: IPasswordService
-    ):
-        self.unit_of_work = unit_of_work
+    def __init__(self, uow: IAMUnitOfWork, password_service: IPasswordService):
+        self.uow = uow
         self.password_service = password_service
 
     async def execute(self, account_id: UUID, change_password_data: ChangePasswordData):
-        async with self.unit_of_work as uow:
+        async with self.uow as uow:
             account = await uow.account.get_account_by_id(account_id)
 
             self.password_service.validate(change_password_data.new_password)

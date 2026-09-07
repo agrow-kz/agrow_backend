@@ -1,6 +1,6 @@
 from typing import Optional
 
-from src.core.shared.application.interfaces.cache_service import ICacheService
+from src.core.shared.infrastructure.services.redis_service import RedisService
 from src.core.vendor.application.interfaces.taxpayer_gateway import ITaxpayerGateway
 from src.core.vendor.domain.enums import LegalForm
 from src.core.vendor.domain.exceptions import (
@@ -11,7 +11,7 @@ from src.core.vendor.presentation.dto import TaxpayerResponse
 
 
 class TaxpayerValidationService:
-    def __init__(self, gateway: ITaxpayerGateway, cache_service: ICacheService):
+    def __init__(self, gateway: ITaxpayerGateway, cache_service: RedisService) -> None:
         self.gateway = gateway
         self.cache_service = cache_service
 

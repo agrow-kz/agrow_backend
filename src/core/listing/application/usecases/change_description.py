@@ -2,13 +2,13 @@ from uuid import UUID
 
 from loguru import logger
 
-from src.core.listing.application.interfaces.uow import IListingUnitOfWork
 from src.core.listing.domain.exceptions import ListingNotFoundError
+from src.core.listing.infrastructure.uow import ListingUnitOfWork
 from src.core.listing.presentation.dto import ChangeListingDescriptionRequest
 
 
 class ChangeListingDescriptionUseCase:
-    def __init__(self, uow: IListingUnitOfWork):
+    def __init__(self, uow: ListingUnitOfWork):
         self.uow = uow
 
     async def execute(

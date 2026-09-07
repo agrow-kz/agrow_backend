@@ -1,11 +1,11 @@
 from uuid import UUID
 
-from src.core.listing.application.interfaces.uow import IListingUnitOfWork
 from src.core.listing.domain.exceptions import ListingNotFoundError
+from src.core.listing.infrastructure.uow import ListingUnitOfWork
 
 
 class ActivateListingUseCase:
-    def __init__(self, uow: IListingUnitOfWork):
+    def __init__(self, uow: ListingUnitOfWork):
         self.uow = uow
 
     async def execute(self, vendor_id: UUID, listing_id: UUID):
