@@ -2,10 +2,8 @@ from typing import Any
 
 from redis.asyncio import Redis
 
-from src.core.shared.application.interfaces.cache_service import ICacheService
 
-
-class RedisService(ICacheService):
+class RedisService:
     def __init__(self, client: Redis) -> None:
         self.client = client
 

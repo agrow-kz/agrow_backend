@@ -1,26 +1,26 @@
 from loguru import logger
 
-from src.core.iam.application.interfaces.token_service import ITokenService
-from src.core.iam.application.interfaces.uow import IIAMUnitOfWork
 from src.core.iam.application.services.otp import OTPService
 from src.core.iam.domain.enums import OTPType, TokenType
 from src.core.iam.domain.exceptions import AccountNotFoundError
+from src.core.iam.infrastructure.services.pyjwt_token import PyJWTTokenService
+from src.core.iam.infrastructure.uow import IAMUnitOfWork
 from src.core.iam.presentation.dto import AccountConfirmation, LoginResponse
 
 
 class AccountConfirmationUseCase:
     def __init__(
         self,
-        unit_of_work: IIAMUnitOfWork,
+        uow: IAMUnitOfWork,
         otp_service: OTPService,
-        token_service: ITokenService,
+        token_service: PyJWTTokenService,
     ):
-        self.unit_of_work = unit_of_work
+        self.uow = uow
         self.otp_service = otp_service
         self.token_service = token_service
 
     async def execute(self, confirmation_data: AccountConfirmation):
-        async with self.unit_of_work as uow:
+        async with self.uow as uow:
             account = await uow.account.get_account_by_email(confirmation_data.email)
             if not account:
                 raise AccountNotFoundError()

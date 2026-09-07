@@ -6,14 +6,13 @@ from src.core.admin.infrastructure.models import Admin as ORMAdmin
 class AdminMapper:
     @staticmethod
     def to_domain(orm: ORMAdmin) -> DomainAdmin:
-        """Переводит ORM-модель SQLAlchemy в Доменный Агрегат Admin."""
         domain_permissions = [
             Permission(
                 id=p.id,
                 code=p.codename,
                 description=p.description or "",
             )
-            for p in orm.permissions  # ORM сам подтянул их благодаря lazy="selectin"
+            for p in orm.permissions
         ]
 
         return DomainAdmin(
@@ -28,7 +27,6 @@ class AdminMapper:
 
     @staticmethod
     def to_orm(domain: DomainAdmin) -> ORMAdmin:
-        """Переводит Доменный Агрегат Admin в ORM-модель."""
         return ORMAdmin(
             id=domain.id,
             account_id=domain.account_id,

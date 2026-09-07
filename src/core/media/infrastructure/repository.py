@@ -3,13 +3,12 @@ from uuid import UUID
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.media.application.interfaces.repository import IMediaRepository
 from src.core.media.domain.entities import Media as DomainMedia
 from src.core.media.infrastructure.mapper import MediaMapper
 from src.core.media.infrastructure.models import Media as ORMMedia
 
 
-class MediaRepository(IMediaRepository):
+class MediaRepository:
     def __init__(self, session: AsyncSession):
         self._session = session
         self.model = ORMMedia

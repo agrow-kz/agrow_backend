@@ -3,13 +3,12 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.listing.application.interfaces.repository import IListingRepository
 from src.core.listing.domain.entities import Listing as DomainListing
 from src.core.listing.infrastructure.mapper import ListingMapper
 from src.core.listing.infrastructure.models import Listing as ORMListing
 
 
-class ListingRepository(IListingRepository):
+class ListingRepository:
     def __init__(self, session: AsyncSession):
         self._session = session
         self.model = ORMListing

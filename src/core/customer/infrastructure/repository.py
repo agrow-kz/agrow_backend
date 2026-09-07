@@ -3,13 +3,12 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.customer.application.interfaces.repository import ICustomerRepository
 from src.core.customer.domain.entities import Customer as DomainCustomer
 from src.core.customer.infrastructure.mapper import CustomerMapper
 from src.core.customer.infrastructure.models import Customer as ORMCustomer
 
 
-class CustomerRepository(ICustomerRepository):
+class CustomerRepository:
     def __init__(self, session: AsyncSession):
         self._session = session
         self._model = ORMCustomer

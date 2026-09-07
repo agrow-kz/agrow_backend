@@ -2,21 +2,21 @@ from uuid import UUID
 
 from loguru import logger
 
-from src.core.shared.application.interfaces.cache_service import ICacheService
-from src.core.vendor.application.interfaces.uow import IVendorUnitOfWork
+from src.core.shared.infrastructure.services.redis_service import RedisService
 from src.core.vendor.application.services.vendor_validation import (
     TaxpayerValidationService,
 )
 from src.core.vendor.domain.entities import Vendor
 from src.core.vendor.domain.exceptions import VendorAlreadyExistsError
+from src.core.vendor.infrastructure.uow import VendorUnitOfWork
 from src.core.vendor.presentation.dto import CreateVendorRequest, TaxpayerResponse
 
 
 class RegisterVendorUseCase:
     def __init__(
         self,
-        uow: IVendorUnitOfWork,
-        cache_service: ICacheService,
+        uow: VendorUnitOfWork,
+        cache_service: RedisService,
         taxpayer_validation_service: TaxpayerValidationService,
     ):
         self.uow = uow

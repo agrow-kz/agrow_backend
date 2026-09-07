@@ -1,11 +1,11 @@
 from uuid import UUID
 
-from src.core.customer.application.interfaces.uow import ICustomerUnitOfWork
 from src.core.customer.domain.entities import Customer
+from src.core.customer.infrastructure.uow import CustomerUnitOfWork
 
 
 class CustomerService:
-    def __init__(self, uow: ICustomerUnitOfWork):
+    def __init__(self, uow: CustomerUnitOfWork):
         self.uow = uow
 
     async def create(self, account_id: UUID, last_name: str, first_name: str):

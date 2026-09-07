@@ -5,14 +5,14 @@ from loguru import logger
 from src.core.catalog.infrastructure.attribute_validation import (
     AttributeValidationService,
 )
-from src.core.listing.application.interfaces.uow import IListingUnitOfWork
 from src.core.listing.domain.exceptions import ListingNotFoundError
+from src.core.listing.infrastructure.uow import ListingUnitOfWork
 from src.core.listing.presentation.dto import ChangeListingAttributeRequest
 
 
 class ChangeListingAttributeUseCase:
     def __init__(
-        self, uow: IListingUnitOfWork, attribute_validation: AttributeValidationService
+        self, uow: ListingUnitOfWork, attribute_validation: AttributeValidationService
     ):
         self.uow = uow
         self.attribute_validation = attribute_validation

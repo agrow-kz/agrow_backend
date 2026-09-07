@@ -1,15 +1,15 @@
 from loguru import logger
 
-from src.core.iam.application.interfaces.uow import IIAMUnitOfWork
+from src.core.iam.infrastructure.uow import IAMUnitOfWork
 from src.core.iam.presentation.dto import RefreshData
 
 
 class LogoutUserUseCase:
-    def __init__(self, unit_of_work: IIAMUnitOfWork):
-        self.unit_of_work = unit_of_work
+    def __init__(self, uow: IAMUnitOfWork):
+        self.uow = uow
 
     async def execute(self, refresh_data: RefreshData):
-        async with self.unit_of_work as uow:
+        async with self.uow as uow:
             account = await uow.account.find_by_token_value(refresh_data.refresh_token)
             if not account:
                 return

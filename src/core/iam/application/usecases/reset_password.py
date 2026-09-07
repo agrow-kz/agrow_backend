@@ -1,26 +1,26 @@
 from loguru import logger
 
 from src.core.iam.application.interfaces.password_service import IPasswordService
-from src.core.iam.application.interfaces.uow import IIAMUnitOfWork
 from src.core.iam.application.services.otp import OTPService
 from src.core.iam.domain.enums import OTPType
 from src.core.iam.domain.exceptions import AccountNotFoundError
+from src.core.iam.infrastructure.uow import IAMUnitOfWork
 from src.core.iam.presentation.dto import ResetPasswordData
 
 
 class ResetPasswordUseCase:
     def __init__(
         self,
-        unit_of_work: IIAMUnitOfWork,
+        uow: IAMUnitOfWork,
         password_service: IPasswordService,
         otp_service: OTPService,
     ):
-        self.unit_of_work = unit_of_work
+        self.uow = uow
         self.password_service = password_service
         self.otp_service = otp_service
 
     async def execute(self, reset_password_data: ResetPasswordData):
-        async with self.unit_of_work as uow:
+        async with self.uow as uow:
             account = await uow.account.get_account_by_email(reset_password_data.email)
             if not account:
                 raise AccountNotFoundError()

@@ -2,7 +2,6 @@ from uuid import UUID
 
 from loguru import logger
 
-from src.core.iam.application.interfaces.uow import IIAMUnitOfWork
 from src.core.iam.application.services.otp import OTPService
 from src.core.iam.domain.enums import OTPType
 from src.core.iam.domain.exceptions import (
@@ -10,13 +9,14 @@ from src.core.iam.domain.exceptions import (
     EmailChangeRequestNotFoundError,
 )
 from src.core.iam.domain.value_objects import Email
+from src.core.iam.infrastructure.uow import IAMUnitOfWork
 from src.core.iam.presentation.dto import ConfirmEmailChangeRequest
-from src.core.shared.application.interfaces.cache_service import ICacheService
+from src.core.shared.infrastructure.services.redis_service import RedisService
 
 
 class ConfirmEmailChangeUseCase:
     def __init__(
-        self, uow: IIAMUnitOfWork, otp_service: OTPService, cache_service: ICacheService
+        self, uow: IAMUnitOfWork, otp_service: OTPService, cache_service: RedisService
     ):
         self.uow = uow
         self.otp_service = otp_service
