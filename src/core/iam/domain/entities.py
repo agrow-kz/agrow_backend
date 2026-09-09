@@ -8,7 +8,7 @@ from src.core.iam.domain.exceptions import (
     AccountAlreadyConfirmedError,
     AccountNotConfirmedError,
 )
-from src.core.iam.domain.value_objects import Email, Password
+from src.core.iam.domain.value_objects import Email, HashedPassword
 from src.core.shared.domain.entities import AggregateRoot, Entity
 
 
@@ -16,7 +16,7 @@ from src.core.shared.domain.entities import AggregateRoot, Entity
 class Account(AggregateRoot):
     id: UUID
     email: Email
-    password: Password
+    password: HashedPassword
     password_changed_at: datetime
     is_active: bool
     created_at: datetime
@@ -24,7 +24,7 @@ class Account(AggregateRoot):
     tokens: list["Token"]
 
     @classmethod
-    def create(cls, email: Email, password: Password) -> "Account":
+    def create(cls, email: Email, password: HashedPassword) -> "Account":
         return cls(
             id=uuid.uuid4(),
             email=email,
@@ -73,8 +73,8 @@ class Account(AggregateRoot):
         self.revoke_all_tokens_by_type(TokenType.PASSWORD)
         self.add_new_token(TokenType.PASSWORD, token_value, expires_at)
 
-    def reset_password(self, new_hashed_password: str):
-        self.password = Password(new_hashed_password)
+    def reset_password(self, new_hashed_password: HashedPassword):
+        self.password = new_hashed_password
         self.password_changed_at = datetime.now(timezone.utc)
         self.revoke_all_tokens_by_type(TokenType.REFRESH)
 
@@ -83,8 +83,8 @@ class Account(AggregateRoot):
             if token.type == token_type and not token.is_revoked:
                 token.revoke_token()
 
-    def change_password(self, new_hashed_password: str):
-        self.password = Password(new_hashed_password)
+    def change_password(self, new_hashed_password: HashedPassword):
+        self.password = new_hashed_password
         self.password_changed_at = datetime.now(timezone.utc)
         self.revoke_all_tokens_by_type(TokenType.REFRESH)
 

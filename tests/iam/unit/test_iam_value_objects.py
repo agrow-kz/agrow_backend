@@ -3,9 +3,10 @@ import pytest
 from src.core.iam.domain.exceptions import (
     EmailRequiredError,
     InvalidEmailFormatError,
+    InvalidPasswordError,
     PasswordRequiredError,
 )
-from src.core.iam.domain.value_objects import Email, Password
+from src.core.iam.domain.value_objects import Email, HashedPassword, PlainPassword
 
 
 class TestEmailValueObject:
@@ -25,13 +26,30 @@ class TestEmailValueObject:
             Email(value="test")
 
 
+class TestPlainPasswordValueObject:
+    @pytest.mark.unit
+    def test_successful_plain_password_creation(self):
+        plain_password = PlainPassword(value="myPassword321")
+        assert plain_password.value == "myPassword321"
+
+    @pytest.mark.unit
+    def test_plain_required_raises(self):
+        with pytest.raises(PasswordRequiredError):
+            PlainPassword(value=None)
+
+    @pytest.mark.unit
+    def test_plain_password_length_raises(self):
+        with pytest.raises(InvalidPasswordError):
+            PlainPassword(value="psw123")
+
+
 class TestPasswordValueObject:
     @pytest.mark.unit
     def test_successful_password_creation(self):
-        password = Password(value="hashed_password")
+        password = HashedPassword(value="hashed_password")
         assert password.value is not None
 
     @pytest.mark.unit
     def test_password_required_raises(self):
         with pytest.raises(PasswordRequiredError):
-            Password(value=None)
+            HashedPassword(value=None)

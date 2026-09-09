@@ -1,11 +1,11 @@
 from loguru import logger
 
-from src.core.iam.application.interfaces.password_service import IPasswordService
 from src.core.iam.application.services.otp import OTPService
 from src.core.iam.domain.entities import Account
 from src.core.iam.domain.enums import OTPType
 from src.core.iam.domain.exceptions import AccountAlreadyExistsError
-from src.core.iam.domain.value_objects import Email, Password
+from src.core.iam.domain.value_objects import Email
+from src.core.iam.infrastructure.services.password_service import PasswordService
 from src.core.iam.infrastructure.uow import IAMUnitOfWork
 from src.core.iam.presentation.dto import CreateAccountRequest
 
@@ -15,7 +15,7 @@ class CreateAccountUseCase:
         self,
         uow: IAMUnitOfWork,
         otp_service: OTPService,
-        password_service: IPasswordService,
+        password_service: PasswordService,
     ):
         self.uow = uow
         self.otp_service = otp_service
@@ -27,9 +27,9 @@ class CreateAccountUseCase:
             if existing:
                 raise AccountAlreadyExistsError()
 
-            self.password_service.validate(dto.raw_password)
-            hashed = self.password_service.hash(dto.raw_password)
-            account = Account.create(email=Email(dto.email), password=Password(hashed))
+            validated_plain = self.password_service.validate(dto.raw_password)
+            hashed = self.password_service.hash(validated_plain)
+            account = Account.create(email=Email(dto.email), password=hashed)
 
             await uow.account.save(account)
             await uow.commit()

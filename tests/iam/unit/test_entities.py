@@ -7,7 +7,7 @@ from src.core.iam.domain.exceptions import (
     AccountAlreadyConfirmedError,
     AccountNotConfirmedError,
 )
-from src.core.iam.domain.value_objects import Password
+from src.core.iam.domain.value_objects import HashedPassword
 from tests.iam.conftest import (
     create_domain_account,
     get_token_by_type,
@@ -32,7 +32,7 @@ def test_confirm_account_fails_when_already_active():
 @pytest.mark.unit
 def test_login_success():
     account = create_domain_account(is_active=True)
-    account.password = Password(value="hashed_password")
+    account.password = HashedPassword(value="hashed_password")
     account.login()
 
 
@@ -46,12 +46,12 @@ def test_login_fails_when_user_inactive():
 @pytest.mark.unit
 def test_change_password_success():
     account = create_domain_account(is_active=True)
-    account.password = Password(value="old_hashed_password")
+    account.password = HashedPassword(value="old_hashed_password")
 
     expires_at = datetime.now(timezone.utc) + timedelta(hours=1)
     account.add_new_token(TokenType.REFRESH, "refresh_token_123", expires_at)
 
-    account.change_password("new_hashed_password")
+    account.change_password(HashedPassword("new_hashed_password"))
 
     assert account.password.value == "new_hashed_password"
     refresh_token = get_token_by_type(account.tokens, TokenType.REFRESH)

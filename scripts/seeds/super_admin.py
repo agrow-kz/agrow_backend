@@ -34,12 +34,12 @@ async def seed_super_admin():
         bloom_filter = load_bloom()
         password_service = PasswordService(bloom=bloom_filter)
 
-        password_service.validate(admin_settings.super_admin_password)
-        hashed_password = password_service.hash(admin_settings.super_admin_password)
+        validated_plain = password_service.validate(admin_settings.super_admin_password)
+        hashed_password = password_service.hash(validated_plain)
 
         account = Account(
             email=admin_settings.super_admin_email,
-            password_hash=hashed_password,
+            password_hash=hashed_password.value,
             is_active=True,
             password_changed_at=datetime.now(timezone.utc),
         )

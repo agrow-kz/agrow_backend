@@ -1,6 +1,6 @@
 from src.core.iam.domain.entities import Account as DomainAccount
 from src.core.iam.domain.entities import Token as DomainToken
-from src.core.iam.domain.value_objects import Email, Password
+from src.core.iam.domain.value_objects import Email, HashedPassword
 from src.core.iam.infrastructure.models import Account as ORMAccount
 from src.core.iam.infrastructure.models import Token as ORMToken
 
@@ -26,7 +26,7 @@ class AccountMapper:
         return DomainAccount(
             id=account.id,
             email=Email(account.email),
-            password=Password(account.password_hash),
+            password=HashedPassword(account.password_hash),
             password_changed_at=account.password_changed_at,
             is_active=account.is_active,
             created_at=account.created_at,
