@@ -1,9 +1,9 @@
 from loguru import logger
 
-from src.core.iam.application.interfaces.password_service import IPasswordService
 from src.core.iam.application.services.otp import OTPService
 from src.core.iam.domain.enums import OTPType
 from src.core.iam.domain.exceptions import AccountNotFoundError
+from src.core.iam.infrastructure.services.password_service import PasswordService
 from src.core.iam.infrastructure.uow import IAMUnitOfWork
 from src.core.iam.presentation.dto import ResetPasswordData
 
@@ -12,7 +12,7 @@ class ResetPasswordUseCase:
     def __init__(
         self,
         uow: IAMUnitOfWork,
-        password_service: IPasswordService,
+        password_service: PasswordService,
         otp_service: OTPService,
     ):
         self.uow = uow
@@ -31,10 +31,10 @@ class ResetPasswordUseCase:
                 otp_value=reset_password_data.password_reset_otp,
             )
 
-            self.password_service.validate(reset_password_data.raw_password)
-            new_hashed_password = self.password_service.hash(
+            validated_plain = self.password_service.validate(
                 reset_password_data.raw_password
             )
+            new_hashed_password = self.password_service.hash(validated_plain)
             account.reset_password(new_hashed_password)
 
             await uow.account.save(account)

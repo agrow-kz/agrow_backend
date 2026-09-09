@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from src.core.iam.domain.exceptions import (
     EmailRequiredError,
     InvalidEmailFormatError,
+    InvalidPasswordError,
     PasswordRequiredError,
 )
 
@@ -27,7 +28,26 @@ class Email:
 
 
 @dataclass(frozen=True)
-class Password:
+class PlainPassword:
+    value: str
+
+    def __post_init__(self):
+        self.validate_required()
+        self.validate_length()
+
+    def validate_required(self):
+        if not self.value:
+            raise PasswordRequiredError()
+
+    def validate_length(self):
+        if len(self.value) < 8:
+            raise InvalidPasswordError("Пароль должен быть не менее 8 символов")
+        if len(self.value) > 64:
+            raise InvalidPasswordError("Пароль должен быть не более 64 символов")
+
+
+@dataclass(frozen=True)
+class HashedPassword:
     value: str
 
     def __post_init__(self):

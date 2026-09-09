@@ -7,7 +7,7 @@ import pytest_asyncio
 
 from src.core.iam.domain.entities import Account
 from src.core.iam.domain.enums import TokenType
-from src.core.iam.domain.value_objects import Email, Password
+from src.core.iam.domain.value_objects import Email, HashedPassword
 from src.core.iam.presentation.dto import CreateAccountRequest
 from src.core.shared.infrastructure.services.arq_service import ArqService
 
@@ -18,7 +18,7 @@ def create_domain_account(
     return Account(
         id=uuid.uuid4(),
         email=Email("test@example.com"),
-        password=Password("$2b$12$fakehashstring..."),
+        password=HashedPassword("$2b$12$fakehashstring..."),
         password_changed_at=datetime.now(timezone.utc),
         is_active=is_active,
         created_at=datetime.now(timezone.utc),
