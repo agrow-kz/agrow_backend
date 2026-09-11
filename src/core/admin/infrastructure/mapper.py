@@ -1,6 +1,18 @@
 from src.core.admin.domain.entities import Admin as DomainAdmin
 from src.core.admin.domain.entities import Permission
+from src.core.admin.domain.entities import Permission as DomainPermission
 from src.core.admin.infrastructure.models import Admin as ORMAdmin
+from src.core.admin.infrastructure.models import Permission as ORMPermission
+
+
+class PermissionMapper:
+    @staticmethod
+    def to_domain(orm: ORMPermission) -> DomainPermission:
+        return DomainPermission(
+            id=orm.id,
+            code=orm.codename,
+            description=orm.description or "",
+        )
 
 
 class AdminMapper:

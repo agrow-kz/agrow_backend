@@ -8,6 +8,7 @@ from fastapi.security import HTTPAuthorizationCredentials as BearerCredentials
 from fastapi.security import HTTPBearer
 
 from src.configuration.dependencies.container import ApplicationContainer
+from src.core.admin.domain.entities import Admin
 from src.core.admin.infrastructure.uow import AdminUnitOfWork
 from src.core.customer.infrastructure.uow import CustomerUnitOfWork
 from src.core.iam.domain.enums import TokenType
@@ -22,7 +23,6 @@ from src.core.shared.infrastructure.services.api_session_service import (
     APISessionService,
 )
 from src.core.shared.presentation.dto import (
-    CurrentAdmin,
     CurrentCustomer,
     CurrentUser,
     CurrentVendor,
@@ -148,7 +148,21 @@ async def get_current_admin(
         if not admin:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Access Denied. You are not registered as admin",
+                detail="У вас недостаточно прав доступа.",
             )
 
-        return CurrentAdmin(id=admin.id)
+        return admin
+
+
+def require_admin(permission_code: str):
+    async def dependency(
+        admin: Admin = Depends(get_current_admin),
+    ) -> Admin:
+        if not admin.can(permission_code):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="У вас недостаточно прав доступа.",
+            )
+        return admin
+
+    return dependency

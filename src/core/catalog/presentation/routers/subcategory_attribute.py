@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.exc import IntegrityError
 
 from src.configuration.dependencies.container import ApplicationContainer
+from src.core.admin.domain.entities import Admin
 from src.core.catalog.infrastructure.exceptions import (
     AttributeAlreadyAttachedError,
     CatalogNotFoundError,
@@ -21,6 +22,7 @@ from src.core.catalog.presentation.dto.attributes import (
     AttachAttributeRequest,
     SubcategoryAttributeResponse,
 )
+from src.core.shared.presentation.security import require_admin
 
 subcategory_attribute_router = APIRouter(prefix="/{subcategory_id}/attributes")
 
@@ -42,6 +44,7 @@ async def attach_attribute(
         SubcategoryAttributeRepository,
         Depends(Provide[ApplicationContainer.catalog.subcategory_attribute_repository]),
     ],
+    current_admin: Admin = Depends(require_admin("create:attribute:link")),
 ):
     if not await subcategory_repo.get_by_id(subcategory_id):
         raise CatalogNotFoundError(field=str(subcategory_id))
@@ -75,6 +78,7 @@ async def detach_attribute(
         SubcategoryAttributeRepository,
         Depends(Provide[ApplicationContainer.catalog.subcategory_attribute_repository]),
     ],
+    current_admin: Admin = Depends(require_admin("delete:attribute:link")),
 ):
     await link_repo.delete(link_id)
     return {"message": "Attribute detached successfully"}

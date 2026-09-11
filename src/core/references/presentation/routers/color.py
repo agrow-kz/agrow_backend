@@ -6,12 +6,14 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.params import Depends
 
 from src.configuration.dependencies.container import ApplicationContainer
+from src.core.admin.domain.entities import Admin
 from src.core.references.infrastructure.repositories.color import ColorRepository
 from src.core.references.presentation.dto.color import (
     ColorResponse,
     CreateColorRequest,
     UpdateColorRequest,
 )
+from src.core.shared.presentation.security import require_admin
 
 color_router = APIRouter(prefix="/color")
 
@@ -44,13 +46,20 @@ async def get_by_id(color_id: UUID, repo: ColorRepository = Depends(get_repo)):
 @color_router.post(
     "/", response_model=ColorResponse, status_code=status.HTTP_201_CREATED
 )
-async def create(dto: CreateColorRequest, repo: ColorRepository = Depends(get_repo)):
+async def create(
+    dto: CreateColorRequest,
+    repo: ColorRepository = Depends(get_repo),
+    current_admin: Admin = Depends(require_admin("create:color")),
+):
     return await repo.create(dto.name, dto.hex)
 
 
 @color_router.patch("/{color_id}", response_model=ColorResponse)
 async def update(
-    color_id: UUID, dto: UpdateColorRequest, repo: ColorRepository = Depends(get_repo)
+    color_id: UUID,
+    dto: UpdateColorRequest,
+    repo: ColorRepository = Depends(get_repo),
+    current_admin: Admin = Depends(require_admin("update:color")),
 ):
     color = await repo.update(color_id, dto.name, dto.hex)
     if not color:
@@ -61,7 +70,11 @@ async def update(
 
 
 @color_router.delete("/{color_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete(color_id: UUID, repo: ColorRepository = Depends(get_repo)):
+async def delete(
+    color_id: UUID,
+    repo: ColorRepository = Depends(get_repo),
+    current_admin: Admin = Depends(require_admin("delete:color")),
+):
     deleted = await repo.delete(color_id)
     if not deleted:
         raise HTTPException(

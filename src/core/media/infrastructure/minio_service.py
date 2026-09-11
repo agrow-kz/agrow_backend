@@ -1,9 +1,11 @@
 from datetime import timedelta
 
+import minio
 from loguru import logger
 from minio import Minio
 
 from src.core.media.application.interfaces.storage import IObjectStorage
+from src.core.media.domain.exceptions import MediaNotFoundError
 
 
 class MinioService(IObjectStorage):
@@ -26,6 +28,13 @@ class MinioService(IObjectStorage):
         )
 
     def generate_download_url(self, object_name: str, expiration: int = 3600) -> str:
+        try:
+            self._client.stat_object(self._bucket_name, object_name)
+        except minio.S3Error as err:
+            if err.code in ("NoSuchBucket", "NoSuchKey"):
+                raise MediaNotFoundError() from err
+            raise
+
         return self._client.get_presigned_url(
             method="GET",
             bucket_name=self._bucket_name,
