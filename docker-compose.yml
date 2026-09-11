@@ -71,14 +71,14 @@ services:
           memory: 128M
 
   minio:
-    image: minio/minio
+    image: pgsty/silo:RELEASE.2026-09-03T13-18-01Z-distroless
     restart: always
     command: server /data --console-address ":9001"
     env_file: .env
     volumes:
       - minio_data:/data
     healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
+      test: ["CMD", "/usr/bin/silo", "healthcheck", "ready"]
       interval: 5s
       timeout: 5s
       retries: 10
