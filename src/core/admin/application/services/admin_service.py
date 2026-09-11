@@ -1,8 +1,12 @@
 from uuid import UUID
 
-from src.core.admin.domain.exceptions import AdminAlreadyExistsError, AdminNotFoundError
+from src.core.admin.domain.exceptions import (
+    AdminAlreadyExistsError,
+    AdminNotFoundError,
+    PermissionNotFoundError,
+)
 from src.core.admin.infrastructure.uow import AdminUnitOfWork
-from src.core.admin.presentation.dto import CreateAdminRequest
+from src.core.admin.presentation.dto import CreateAdminRequest, GrantPermissionRequest
 from src.core.iam.domain.exceptions import AccountNotFoundError
 from src.core.iam.infrastructure.repository import AccountRepository
 
@@ -37,4 +41,24 @@ class AdminService:
             )
 
             await uow.admin.save(admin)
+            await uow.commit()
+
+    async def grant_permission(
+        self, initiator_account_id: UUID, dto: GrantPermissionRequest
+    ) -> None:
+        async with self.uow as uow:
+            initiator = await uow.admin.get_by_account_id(initiator_account_id)
+            if not initiator:
+                raise AdminNotFoundError()
+
+            permission = await uow.permission.get_by_id(dto.permission_id)
+            if not permission:
+                raise PermissionNotFoundError()
+
+            target_admin = await uow.admin.get_by_id(dto.admin_id)
+            if not target_admin:
+                raise AdminNotFoundError()
+
+            initiator.grant_permission(target_admin, permission)
+            await uow.admin.save(target_admin)
             await uow.commit()

@@ -69,3 +69,8 @@ class RegionSeed(DTO):
 
 class CountrySeed(DTO):
     name: str
+
+
+class PermissionSeed(DTO):
+    codename: str
+    description: str | None = None

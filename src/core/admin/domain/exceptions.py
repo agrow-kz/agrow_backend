@@ -18,3 +18,8 @@ class AdminAlreadyExistsError(AlreadyExistsError):
 class AdminNotFoundError(NotFoundError):
     def __init__(self):
         super().__init__(message="Администратор не найден")
+
+
+class PermissionNotFoundError(NotFoundError):
+    def __init__(self):
+        super().__init__(message="Права не найдены")

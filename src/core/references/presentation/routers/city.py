@@ -6,12 +6,14 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.params import Depends
 
 from src.configuration.dependencies.container import ApplicationContainer
+from src.core.admin.domain.entities import Admin
 from src.core.references.infrastructure.repositories.city import CityRepository
 from src.core.references.presentation.dto.city import (
     CityResponse,
     CreateCityRequest,
     UpdateCityRequest,
 )
+from src.core.shared.presentation.security import require_admin
 
 city_router = APIRouter(prefix="/city")
 
@@ -46,13 +48,20 @@ async def get_by_region(region_id: UUID, repo: CityRepository = Depends(get_repo
 
 
 @city_router.post("/", response_model=CityResponse, status_code=status.HTTP_201_CREATED)
-async def create(dto: CreateCityRequest, repo: CityRepository = Depends(get_repo)):
+async def create(
+    dto: CreateCityRequest,
+    repo: CityRepository = Depends(get_repo),
+    current_admin: Admin = Depends(require_admin("create:city")),
+):
     return await repo.create(dto.name, dto.region_id)
 
 
 @city_router.patch("/{city_id}", response_model=CityResponse)
 async def update(
-    city_id: UUID, dto: UpdateCityRequest, repo: CityRepository = Depends(get_repo)
+    city_id: UUID,
+    dto: UpdateCityRequest,
+    repo: CityRepository = Depends(get_repo),
+    current_admin: Admin = Depends(require_admin("update:city")),
 ):
     city = await repo.update(city_id, dto.name, dto.region_id)
     if not city:
@@ -63,7 +72,11 @@ async def update(
 
 
 @city_router.delete("/{city_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete(city_id: UUID, repo: CityRepository = Depends(get_repo)):
+async def delete(
+    city_id: UUID,
+    repo: CityRepository = Depends(get_repo),
+    current_admin: Admin = Depends(require_admin("delete:city")),
+):
     deleted = await repo.delete(city_id)
     if not deleted:
         raise HTTPException(

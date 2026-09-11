@@ -15,12 +15,14 @@ from scripts.seeds.schemas import (
     BrandSeed,
     ColorSeed,
     CountrySeed,
+    PermissionSeed,
     RegionSeed,
     RubricSeed,
     SubcategoryAttributesSeed,
     UnitSeed,
 )
 from src.configuration.settings.settings import PostgresSettings
+from src.core.admin.infrastructure.models import Permission
 from src.core.catalog.infrastructure.enums import AttributeType, CatalogStatus
 from src.core.catalog.infrastructure.models import (
     AttributeDefinition,
@@ -231,6 +233,15 @@ class DataSeeder:
 
         logger.info("✅ Subcategory attributes linked")
 
+    async def seed_permissions(self):
+        raw_data = self._load_yaml("permissions/permissions.yaml")
+        if not raw_data:
+            return
+        permissions = TypeAdapter(list[PermissionSeed]).validate_python(raw_data)
+        for dto in permissions:
+            self.session.add(Permission(codename=dto.codename))
+        logger.info("✅ Permissions seeded")
+
     async def is_already_seeded(self) -> bool:
         result = await self.session.execute(select(func.count()).select_from(Rubric))
         return result.scalar_one() > 0
@@ -245,6 +256,7 @@ class DataSeeder:
             await self.seed_colors()
             await self.seed_countries()
             await self.seed_locations()
+            await self.seed_permissions()
 
             group_key_to_id = await self.seed_attribute_groups()
             unit_key_to_id = await self.seed_units()

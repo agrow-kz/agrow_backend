@@ -6,12 +6,14 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.params import Depends
 
 from src.configuration.dependencies.container import ApplicationContainer
+from src.core.admin.domain.entities import Admin
 from src.core.references.infrastructure.repositories.brand import BrandRepository
 from src.core.references.presentation.dto.brand import (
     BrandResponse,
     CreateBrandRequest,
     UpdateBrandRequest,
 )
+from src.core.shared.presentation.security import require_admin
 
 brand_router = APIRouter(prefix="/brand")
 
@@ -44,13 +46,20 @@ async def get_by_id(brand_id: UUID, repo: BrandRepository = Depends(get_repo)):
 @brand_router.post(
     "/", response_model=BrandResponse, status_code=status.HTTP_201_CREATED
 )
-async def create(dto: CreateBrandRequest, repo: BrandRepository = Depends(get_repo)):
+async def create(
+    dto: CreateBrandRequest,
+    repo: BrandRepository = Depends(get_repo),
+    current_admin: Admin = Depends(require_admin("create:brand")),
+):
     return await repo.create(dto.name)
 
 
 @brand_router.patch("/{brand_id}", response_model=BrandResponse)
 async def update(
-    brand_id: UUID, dto: UpdateBrandRequest, repo: BrandRepository = Depends(get_repo)
+    brand_id: UUID,
+    dto: UpdateBrandRequest,
+    repo: BrandRepository = Depends(get_repo),
+    current_admin: Admin = Depends(require_admin("update:brand")),
 ):
     brand = await repo.update(brand_id, dto.name)
     if not brand:
@@ -61,7 +70,11 @@ async def update(
 
 
 @brand_router.delete("/{brand_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete(brand_id: UUID, repo: BrandRepository = Depends(get_repo)):
+async def delete(
+    brand_id: UUID,
+    repo: BrandRepository = Depends(get_repo),
+    current_admin: Admin = Depends(require_admin("delete:brand")),
+):
     deleted = await repo.delete(brand_id)
     if not deleted:
         raise HTTPException(

@@ -35,17 +35,6 @@ class Admin(AggregateRoot):
             role=role,
         )
 
-    def is_super_admin(self):
-        return self.role == AdminRoles.SUPER_ADMIN
-
-    def _ensure_can_manage_admins(self, target_role: AdminRoles):
-        if self.is_super_admin():
-            return
-        if target_role in (AdminRoles.SUPER_ADMIN, AdminRoles.ADMIN):
-            raise InsufficientPermissionsError()
-        if self.role != AdminRoles.ADMIN or not self.has_permission("manage_admins"):
-            raise InsufficientPermissionsError()
-
     def add_admin(
         self,
         account_id: UUID,
@@ -54,7 +43,8 @@ class Admin(AggregateRoot):
         patronymic: str,
         role: AdminRoles,
     ) -> "Admin":
-        self._ensure_can_manage_admins(role)
+        if not self.is_super_admin():
+            raise InsufficientPermissionsError()
 
         return Admin._create(
             account_id=account_id,
@@ -64,8 +54,20 @@ class Admin(AggregateRoot):
             role=role,
         )
 
-    def has_permission(self, code: str) -> bool:
-        return any(p.code == code for p in self.permissions)
+    def can(self, permission: str) -> bool:
+        return self.is_super_admin() or self.has_permission(permission)
+
+    def is_super_admin(self):
+        return self.role == AdminRoles.SUPER_ADMIN
+
+    def has_permission(self, permission: str) -> bool:
+        return any(p.code == permission for p in self.permissions)
+
+    def grant_permission(self, target: "Admin", permission: "Permission") -> None:
+        if not self.is_super_admin():
+            raise InsufficientPermissionsError()
+        if not any(p.id == permission.id for p in target.permissions):
+            target.permissions.append(permission)
 
 
 @dataclass(frozen=False)

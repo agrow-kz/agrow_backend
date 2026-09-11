@@ -20,6 +20,7 @@ pytest_plugins = [
     "tests.vendor.conftest",
     "tests.listing.conftest",
     "tests.catalog.conftest",
+    "tests.admin.conftest",
 ]
 
 

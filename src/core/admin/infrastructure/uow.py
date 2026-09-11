@@ -2,7 +2,10 @@ from typing import Callable
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.admin.infrastructure.repository import AdminRepository
+from src.core.admin.infrastructure.repository import (
+    AdminRepository,
+    PermissionRepository,
+)
 from src.core.shared.infrastructure.sql_alchemy_uow import SQLAlchemyUnitOfWork
 
 
@@ -13,3 +16,7 @@ class AdminUnitOfWork(SQLAlchemyUnitOfWork):
     @property
     def admin(self) -> AdminRepository:
         return AdminRepository(self._session)
+
+    @property
+    def permission(self) -> PermissionRepository:
+        return PermissionRepository(self._session)

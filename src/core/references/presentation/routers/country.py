@@ -6,12 +6,14 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.params import Depends
 
 from src.configuration.dependencies.container import ApplicationContainer
+from src.core.admin.domain.entities import Admin
 from src.core.references.infrastructure.repositories.country import CountryRepository
 from src.core.references.presentation.dto.country import (
     CountryResponse,
     CreateCountryRequest,
     UpdateCountryRequest,
 )
+from src.core.shared.presentation.security import require_admin
 
 country_router = APIRouter(prefix="/country")
 
@@ -45,7 +47,9 @@ async def get_by_id(country_id: UUID, repo: CountryRepository = Depends(get_repo
     "/", response_model=CountryResponse, status_code=status.HTTP_201_CREATED
 )
 async def create(
-    dto: CreateCountryRequest, repo: CountryRepository = Depends(get_repo)
+    dto: CreateCountryRequest,
+    repo: CountryRepository = Depends(get_repo),
+    current_admin: Admin = Depends(require_admin("create:country")),
 ):
     return await repo.create(dto.name)
 
@@ -55,6 +59,7 @@ async def update(
     country_id: UUID,
     dto: UpdateCountryRequest,
     repo: CountryRepository = Depends(get_repo),
+    current_admin: Admin = Depends(require_admin("update:country")),
 ):
     country = await repo.update(country_id, dto.name)
     if not country:
@@ -65,7 +70,11 @@ async def update(
 
 
 @country_router.delete("/{country_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete(country_id: UUID, repo: CountryRepository = Depends(get_repo)):
+async def delete(
+    country_id: UUID,
+    repo: CountryRepository = Depends(get_repo),
+    current_admin: Admin = Depends(require_admin("delete:country")),
+):
     deleted = await repo.delete(country_id)
     if not deleted:
         raise HTTPException(

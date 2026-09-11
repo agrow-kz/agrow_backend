@@ -5,6 +5,7 @@ from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends
 
 from src.configuration.dependencies.container import ApplicationContainer
+from src.core.admin.domain.entities import Admin
 from src.core.catalog.infrastructure.enums import CatalogStatus
 from src.core.catalog.infrastructure.exceptions import CatalogNotFoundError
 from src.core.catalog.infrastructure.repositories.categories import (
@@ -16,6 +17,7 @@ from src.core.catalog.presentation.dto.subcategory import (
     ChangeSubcategoryParentRequest,
     CreateSubcategoryRequest,
 )
+from src.core.shared.presentation.security import require_admin
 
 subcategory_router = APIRouter(prefix="/subcategory")
 
@@ -32,6 +34,7 @@ async def create_subcategory(
         CategoryRepository,
         Depends(Provide[ApplicationContainer.catalog.category_repository]),
     ],
+    current_admin: Admin = Depends(require_admin("create:subcategory")),
 ):
     category = await category_repo.get_by_id(dto.category_id)
     if not category:
@@ -56,6 +59,7 @@ async def change_subcategory_parent(
         CategoryRepository,
         Depends(Provide[ApplicationContainer.catalog.category_repository]),
     ],
+    current_admin: Admin = Depends(require_admin("update:subcategory")),
 ):
     category = await category_repo.get_by_id(dto.category_id)
     if not category:
@@ -79,6 +83,7 @@ async def change_subcategory_name(
         SubcategoryRepository,
         Depends(Provide[ApplicationContainer.catalog.subcategory_repository]),
     ],
+    current_admin: Admin = Depends(require_admin("update:subcategory")),
 ):
     subcategory = await subcategory_repo.get_by_id(subcategory_id)
     if not subcategory:
@@ -97,6 +102,7 @@ async def delete_subcategory(
         SubcategoryRepository,
         Depends(Provide[ApplicationContainer.catalog.subcategory_repository]),
     ],
+    current_admin: Admin = Depends(require_admin("delete:subcategory")),
 ):
     subcategory = await subcategory_repo.get_by_id(subcategory_id)
     if not subcategory:

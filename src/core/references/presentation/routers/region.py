@@ -6,12 +6,14 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.params import Depends
 
 from src.configuration.dependencies.container import ApplicationContainer
+from src.core.admin.domain.entities import Admin
 from src.core.references.infrastructure.repositories.region import RegionRepository
 from src.core.references.presentation.dto.region import (
     CreateRegionRequest,
     RegionResponse,
     UpdateRegionRequest,
 )
+from src.core.shared.presentation.security import require_admin
 
 region_router = APIRouter(prefix="/region")
 
@@ -44,7 +46,11 @@ async def get_by_id(region_id: UUID, repo: RegionRepository = Depends(get_repo))
 @region_router.post(
     "/", response_model=RegionResponse, status_code=status.HTTP_201_CREATED
 )
-async def create(dto: CreateRegionRequest, repo: RegionRepository = Depends(get_repo)):
+async def create(
+    dto: CreateRegionRequest,
+    repo: RegionRepository = Depends(get_repo),
+    current_admin: Admin = Depends(require_admin("create:region")),
+):
     return await repo.create(dto.name)
 
 
@@ -53,6 +59,7 @@ async def update(
     region_id: UUID,
     dto: UpdateRegionRequest,
     repo: RegionRepository = Depends(get_repo),
+    current_admin: Admin = Depends(require_admin("update:region")),
 ):
     region = await repo.update(region_id, dto.name)
     if not region:
@@ -63,7 +70,11 @@ async def update(
 
 
 @region_router.delete("/{region_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete(region_id: UUID, repo: RegionRepository = Depends(get_repo)):
+async def delete(
+    region_id: UUID,
+    repo: RegionRepository = Depends(get_repo),
+    current_admin: Admin = Depends(require_admin("delete:region")),
+):
     deleted = await repo.delete(region_id)
     if not deleted:
         raise HTTPException(

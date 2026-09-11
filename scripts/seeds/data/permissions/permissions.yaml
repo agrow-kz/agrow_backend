@@ -1,0 +1,57 @@
+# Catalog Permissions
+- codename: "create:subcategory"
+- codename: "create:category"
+- codename: "create:rubric"
+
+- codename: "update:subcategory"
+- codename: "update:category"
+- codename: "update:rubric"
+
+- codename: "delete:subcategory"
+- codename: "delete:category"
+- codename: "delete:rubric"
+
+- codename: "create:attribute:definition"
+- codename: "update:attribute:definition"
+- codename: "delete:attribute:definition"
+
+- codename: "create:attribute:group"
+- codename: "update:attribute:group"
+- codename: "delete:attribute:group"
+
+- codename: "create:attribute:link"
+- codename: "update:attribute:link"
+- codename: "delete:attribute:link"
+
+# Reference Permissions
+- codename: "create:color"
+- codename: "create:brand"
+- codename: "create:country"
+- codename: "create:unit"
+- codename: "create:region"
+- codename: "create:city"
+
+- codename: "update:color"
+- codename: "update:brand"
+- codename: "update:country"
+- codename: "update:unit"
+- codename: "update:region"
+- codename: "update:city"
+
+- codename: "delete:color"
+- codename: "delete:brand"
+- codename: "delete:country"
+- codename: "delete:unit"
+- codename: "delete:region"
+- codename: "delete:city"
+
+# Vendor Permissions
+- codename: "verify:vendor"
+
+# IAM Permissions
+- codename: "revoke:token"
+- codename: "verify:account"
+
+# Admin Permissions
+- codename: "create:admin"
+- codename: "grant:permission"
